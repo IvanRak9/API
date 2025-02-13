@@ -1,10 +1,14 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity, get_jwt
 from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
 app.config['JWT_SECRET_KEY'] = 'my_super_secret_key_1234'  # Секретний ключ для JWT
 jwt = JWTManager(app)
+
+@app.route("/")
+def home():
+    return render_template("index.html")
 
 # Дані зберігаються в пам'яті
 users = []

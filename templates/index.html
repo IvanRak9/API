@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Interface</title>
+    <script>
+        let token = '';
+
+        async function register() {
+            const username = document.getElementById('reg-username').value;
+            const password = document.getElementById('reg-password').value;
+            const role = document.getElementById('reg-role').value;
+
+            const response = await fetch('/register', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({username, password, role})
+            });
+            alert(await response.json());
+        }
+
+        async function login() {
+            const username = document.getElementById('login-username').value;
+            const password = document.getElementById('login-password').value;
+
+            const response = await fetch('/login', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({username, password})
+            });
+
+            const data = await response.json();
+            token = data.access_token;
+            alert('Logged in successfully!');
+        }
+
+        async function createItem() {
+            const name = document.getElementById('item-name').value;
+            const description = document.getElementById('item-description').value;
+
+            const response = await fetch('/items', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({name, description})
+            });
+            alert(await response.json());
+        }
+
+        async function getItems() {
+            const response = await fetch('/items', {
+                headers: {'Authorization': `Bearer ${token}`}
+            });
+
+            const items = await response.json();
+            document.getElementById('items-list').innerText = JSON.stringify(items, null, 2);
+        }
+    </script>
+</head>
+<body>
+    <h2>Register</h2>
+    <input type="text" id="reg-username" placeholder="Username">
+    <input type="password" id="reg-password" placeholder="Password">
+    <input type="text" id="reg-role" placeholder="Role (Admin/User)">
+    <button onclick="register()">Register</button>
+
+    <h2>Login</h2>
+    <input type="text" id="login-username" placeholder="Username">
+    <input type="password" id="login-password" placeholder="Password">
+    <button onclick="login()">Login</button>
+
+    <h2>Create Item</h2>
+    <input type="text" id="item-name" placeholder="Item Name">
+    <input type="text" id="item-description" placeholder="Description">
+    <button onclick="createItem()">Create</button>
+
+    <h2>Items List</h2>
+    <button onclick="getItems()">Load Items</button>
+    <pre id="items-list"></pre>
+</body>
+</html>
